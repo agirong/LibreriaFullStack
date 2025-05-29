@@ -1,4 +1,8 @@
 using Libreria.Backend.Data;
+using Libreria.Backend.Repository;
+using Libreria.Backend.RepositoryImpl;
+using Libreria.Backend.Service;
+using Libreria.Backend.ServiceImpl;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,6 +18,12 @@ builder.Services.AddDbContext <LibreriaContext>(options =>
 {
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
+
+
+//inyeccion de dependencia
+builder.Services.AddScoped<IServiceLibro, ServiceLibroImpl>();
+builder.Services.AddScoped<IRepositoryLibro, RepositoryLibroImpl>();
+
 
 var app = builder.Build();
 
