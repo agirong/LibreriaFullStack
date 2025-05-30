@@ -1,4 +1,4 @@
-﻿using AppAngular.Server.Utils;
+﻿using Libreria.Backend.Utils;
 using Libreria.Backend.DTOs.Libro;
 using Libreria.Backend.Models;
 using Libreria.Backend.Repository;
@@ -24,14 +24,14 @@ namespace Libreria.Backend.ServiceImpl
                 List<LibroDTO> libros = _repositoryLibro.Get()
                     .Select(l => new LibroDTO
                     {
-                        LibroID = l.LibroID,
-                        Titulo = l.Titulo,
-                        Anio = l.Anio,
-                        Genero = l.Genero,
-                        Editorial = l.Editorial,
-                        Paginas = l.Paginas,
-                        AutorID = l.AutorID,
-                        //NombreAutor = l.Autor.Nombre // Accede a la propiedad Nombre del Autor
+                        idLibro = l.LibroID,
+                        titulo = l.Titulo,
+                        anio = l.Anio,
+                        genero = l.Genero,
+                        editorial = l.Editorial,
+                        paginas = l.Paginas,
+                        idAutor = l.AutorID,
+                        //NombreAutor = l.Autor.Nombre 
                     }).ToList();
 
                 if (libros.Count() > 0)
@@ -54,14 +54,42 @@ namespace Libreria.Backend.ServiceImpl
         {
             try
             {
+                // Validar campos obligatorios
+                if (string.IsNullOrWhiteSpace(libro.titulo) ||
+                libro.anio <= 0 ||
+                string.IsNullOrWhiteSpace(libro.genero) ||
+                libro.paginas <= 0 ||
+                libro.idAutor <= 0)
+                {
+                    return GeneralResponseFn.responseGeneral(Constantes.CODIGO_ERROR, "Faltan campos obligatorios", null);
+                }
+                // Verificar existencia del autor 
+                var autor = _repositoryLibro.GetById(libro.idAutor);
+                if (autor == null)
+                {
+                    return GeneralResponseFn.responseGeneral(Constantes.CODIGO_ERROR, "El autor ingresado no existe", null);
+                }
+
+                // Validación personalizada el año no puede ser futuro
+                if (libro.anio > DateTime.Now.Year)
+                {
+                    return GeneralResponseFn.responseGeneral(Constantes.CODIGO_ERROR, "El año no puede ser en el futuro", null);
+                }
+
+                // Controlar número máximo de libros, ejemplo 15
+                var totalLibros = _repositoryLibro.Get().Count();
+                if (totalLibros >= 15)
+                {
+                    return GeneralResponseFn.responseGeneral(Constantes.CODIGO_ERROR, "Libreria llena. No puede registrar mas libros", null);
+                }
                 Libro libroDB = new Libro
                 {
-                    Titulo = libro.Titulo,
-                    Anio = libro.Anio,
-                    Genero = libro.Genero,
-                    Editorial = libro.Editorial,
-                    Paginas = libro.Paginas,
-                    AutorID = libro.AutorID,
+                    Titulo = libro.titulo,
+                    Anio = libro.anio,
+                    Genero = libro.genero,
+                    Editorial = libro.editorial,
+                    Paginas = libro.paginas,
+                    AutorID = libro.idAutor,
                 };
                 _repositoryLibro.Add(libroDB);
                 generalResponse = GeneralResponseFn.responseGeneral(Constantes.CODIGO_EXITO, Constantes.MENSAJE_OK, null);

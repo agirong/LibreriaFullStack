@@ -21,15 +21,25 @@ namespace Libreria.Backend.RepositoryImpl
             {
                 return _context.Libros.ToList();
             }
-            catch (DbUpdateException ex)
+            catch (Exception ex)
             {
-                throw new Exception("No se pudo registrar el libro. Verifique los datos del autor."+ex.Message);
+                throw new Exception(ex.Message);
+            }
+        }
+
+        //Listar
+        public Libro GetById(int idAutor)
+        {
+            try
+            {
+                return _context.Libros.Where(x=>x.AutorID == idAutor).FirstOrDefault();
             }
             catch (Exception ex)
             {
                 throw new Exception(ex.Message);
             }
         }
+
         //Guardar
         public void Add(Libro libro)
         {
@@ -38,9 +48,13 @@ namespace Libreria.Backend.RepositoryImpl
                 _context.Libros.Add(libro);
                 _context.SaveChanges();
             }
+            catch (DbUpdateException ex)
+            {
+                throw new Exception("No se pudo registrar el libro. Verifique los datos del autor." + ex.Message);
+            }
             catch (Exception ex)
             {
-                throw new Exception((ex.Message));
+                throw new Exception(ex.Message);
             }
         }
     }

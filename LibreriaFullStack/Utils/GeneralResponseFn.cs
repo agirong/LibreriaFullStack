@@ -1,4 +1,4 @@
-﻿namespace AppAngular.Server.Utils
+﻿namespace Libreria.Backend.Utils
 {
     public class GeneralResponseFn
     {
