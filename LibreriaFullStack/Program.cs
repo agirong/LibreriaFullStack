@@ -24,6 +24,9 @@ builder.Services.AddDbContext <LibreriaContext>(options =>
 builder.Services.AddScoped<IServiceLibro, ServiceLibroImpl>();
 builder.Services.AddScoped<IRepositoryLibro, RepositoryLibroImpl>();
 
+builder.Services.AddScoped<IServiceAutor, ServiceAutorImpl>();
+builder.Services.AddScoped<IRepositoryAutor, RepositoryAutorImpl>();
+
 
 var app = builder.Build();
 
