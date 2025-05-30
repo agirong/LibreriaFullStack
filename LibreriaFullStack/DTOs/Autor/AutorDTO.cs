@@ -5,20 +5,19 @@ namespace Libreria.Backend.DTOs.Autor
 {
     public class AutorDTO
     {
-        public int AutorId { get; set; }  
+        public int idAutor { get; set; }  
 
-        [Required, StringLength(100)]
-        public string Nombre { get; set; } = null!;
+        [Required(ErrorMessage = "nombre es obligatorio"), StringLength(100)]
+        public string nombre { get; set; } = null!;
 
-        [Required, DataType(DataType.Date)]
-        public DateTime FhNacimiento { get; set; }
+        [Required(ErrorMessage = "fhNacimiento es obligatorio"), DataType(DataType.Date)]
+        public DateTime fhNacimiento { get; set; }
 
         [StringLength(50)]  
-        public string Ciudad { get; set; } = null!;
+        public string? ciudad { get; set; } = null!;
+        [StringLength(50)]
+        public string? email { get; set; } = null!;
 
-        [Required, EmailAddress]
-        public string Email { get; set; } = null!;
-
-        public ICollection<LibroDTO>? Libros { get; set; }
+        //public ICollection<LibroDTO>? Libros { get; set; }
     }
 }
