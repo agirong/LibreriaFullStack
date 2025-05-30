@@ -28,11 +28,11 @@ namespace Libreria.Backend.RepositoryImpl
         }
 
         //Listar
-        public Libro GetById(int idAutor)
+        public Autor GetById(int idAutor)
         {
             try
             {
-                return _context.Libros.Where(x=>x.AutorID == idAutor).FirstOrDefault();
+                return _context.Autors.Where(x=>x.AutorId == idAutor).FirstOrDefault();
             }
             catch (Exception ex)
             {

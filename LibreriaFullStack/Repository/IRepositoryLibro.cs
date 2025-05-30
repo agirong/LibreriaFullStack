@@ -6,7 +6,7 @@ namespace Libreria.Backend.Repository
     {
         public List<Libro> Get();
 
-        public Libro GetById(int idAutor);
+        public Autor GetById(int idAutor);
 
         public void Add(Libro libro);
     }
