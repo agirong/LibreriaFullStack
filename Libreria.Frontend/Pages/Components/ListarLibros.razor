@@ -1,0 +1,74 @@
+﻿@page "/libros" 
+@using Libreria.Frontend.Models 
+@using Libreria.Frontend.Services
+@inject ILibroService LibroService 
+
+
+<h3>Listar Libros</h3>
+
+@if (libros == null && string.IsNullOrEmpty(mensajeError))
+{
+    <p><em>Cargando libros...</em></p>
+}
+else if (!string.IsNullOrEmpty(mensajeError))
+{
+    <p style="color: red;">Error: @mensajeError</p>
+}
+else if (libros != null && !libros.Any())
+{
+    <p>No hay libros para mostrar.</p>
+}
+else if (libros != null)
+{
+    <MudTable Items="libros" Hover="true" Breakpoint="Breakpoint.Sm" Loading="@(libros == null)" LoadingProgressColor="Color.Info">
+        <HeaderContent>
+            <MudTh>ID Libro</MudTh>
+            <MudTh>Título</MudTh>
+            <MudTh>Anio</MudTh>
+            <MudTh>Editorial</MudTh>
+            <MudTh>Páginas</MudTh>
+            <MudTh>Autor</MudTh>
+        </HeaderContent>
+
+        <RowTemplate>
+            <MudTd DataLabel="ID Libro">@context.idLibro</MudTd>
+            <MudTd DataLabel="Título">@context.titulo</MudTd>
+            <MudTd DataLabel="Anio">@context.anio</MudTd>
+            <MudTd DataLabel="Editorial">@context.editorial</MudTd>
+            <MudTd DataLabel="Paginas">@context.paginas</MudTd>
+            <MudTd DataLabel="Autor">@context.idAutor</MudTd>
+        </RowTemplate>
+        <PagerContent>
+            <MudTablePager />
+        </PagerContent>
+    </MudTable>
+}
+
+@code {
+    private List<Libro>? libros;
+    private string? mensajeError;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var apiResponse = await LibroService.GetLibrosAsync();
+
+            if (apiResponse != null && apiResponse.Data != null && apiResponse.Status == 200) 
+            {
+                libros = apiResponse.Data;
+            }
+            else
+            {
+                mensajeError = $"Error al cargar libros: {apiResponse?.Message} (Status: {apiResponse?.Status})";
+                libros = new List<Libro>();
+            }
+        }
+        catch (Exception ex)
+        {
+            mensajeError = $"Ocurrió un error inesperado: {ex.Message}";
+            Console.WriteLine($"Error al obtener libros: {ex.Message}");
+        }
+    }
+}
+
