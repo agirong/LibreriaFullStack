@@ -3,7 +3,6 @@
 @using Libreria.Frontend.Services
 @inject ILibroService LibroService 
 
-
 <h3>Listar Libros</h3>
 
 @if (libros == null && string.IsNullOrEmpty(mensajeError))
@@ -24,7 +23,7 @@ else if (libros != null)
         <HeaderContent>
             <MudTh>ID Libro</MudTh>
             <MudTh>Título</MudTh>
-            <MudTh>Anio</MudTh>
+            <MudTh>Año</MudTh>
             <MudTh>Editorial</MudTh>
             <MudTh>Páginas</MudTh>
             <MudTh>Autor</MudTh>
@@ -65,9 +64,8 @@ else if (libros != null)
             }
         }
         catch (Exception ex)
-        {
-            mensajeError = $"Ocurrió un error inesperado: {ex.Message}";
-            Console.WriteLine($"Error al obtener libros: {ex.Message}");
+        {            
+            mensajeError = $"Error:{ex.Message}";
         }
     }
 }
