@@ -1,6 +1,6 @@
 ﻿namespace Libreria.Frontend.Models
 {
-    public class ApiResponse<T>
+    public class ApiResponseDTO<T>
     {
         public int Status { get; set; }
         public string? Message { get; set; }

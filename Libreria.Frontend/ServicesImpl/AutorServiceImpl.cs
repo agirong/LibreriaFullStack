@@ -1,23 +1,23 @@
-﻿using Libreria.Frontend.DTOs.Libro;
+﻿using Libreria.Frontend.DTOs.Autor;
 using Libreria.Frontend.Models;
 using System.Net.Http.Json;
 
 namespace Libreria.Frontend.Services
 {
-    public class LibroServiceImpl : ILibroService   
+    public class AutorServiceImpl : IAutorService
     {
         private readonly HttpClient _httpClient;
 
-        public LibroServiceImpl(HttpClient httpClient)
+        public AutorServiceImpl(HttpClient httpClient) 
         {
             _httpClient = httpClient;
         }
 
-        public async Task<ApiResponseDTO<List<LibroDTO>>?> GetLibrosAsync()
+        public async Task<ApiResponseDTO<List<AutorDTO>>?> GetAutorsAsync()
         {
             try
             {
-                return await _httpClient.GetFromJsonAsync<ApiResponseDTO<List<LibroDTO>>>("api/Libros");
+                return await _httpClient.GetFromJsonAsync<ApiResponseDTO<List<AutorDTO>>>("api/Autor");
             }
             catch (HttpRequestException ex)
             {

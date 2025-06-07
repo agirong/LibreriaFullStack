@@ -1,6 +1,6 @@
-﻿namespace Libreria.Frontend.Models
+﻿namespace Libreria.Frontend.DTOs.Libro
 {
-    public class Libro
+    public class LibroDTO
     {
         public int idLibro { get; set; }
         public string titulo { get; set; }

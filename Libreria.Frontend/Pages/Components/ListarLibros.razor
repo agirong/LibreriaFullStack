@@ -1,54 +1,87 @@
 ﻿@page "/libros" 
-@using Libreria.Frontend.Models 
+@using Libreria.Frontend.DTOs.Autor
+@using Libreria.Frontend.DTOs.Libro
 @using Libreria.Frontend.Services
+@using Libreria.Frontend.Shared 
 @inject ILibroService LibroService 
+@inject IDialogService DialogService 
 
-<h3>Listar Libros</h3>
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <div class="flex justify-between items-center mb-8">
+        <div>
+            <h1 class="text-3xl font-bold tracking-tight text-text-primary">
+                Catálogo de Libros
+            </h1>
+            <p class="mt-1 text-sm text-text-secondary">
+                Mantenimiento de Libros Disponibles.
+            </p>
+        </div>
+        <div>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" OnClick="OpenCreateDialog">
+                Crear Libro
+            </MudButton>
+        </div>
+    </div>
 
-@if (libros == null && string.IsNullOrEmpty(mensajeError))
-{
-    <p><em>Cargando libros...</em></p>
-}
-else if (!string.IsNullOrEmpty(mensajeError))
-{
-    <p style="color: red;">Error: @mensajeError</p>
-}
-else if (libros != null && !libros.Any())
-{
-    <p>No hay libros para mostrar.</p>
-}
-else if (libros != null)
-{
-    <MudTable Items="libros" Hover="true" Breakpoint="Breakpoint.Sm" Loading="@(libros == null)" LoadingProgressColor="Color.Info">
-        <HeaderContent>
-            <MudTh>ID Libro</MudTh>
-            <MudTh>Título</MudTh>
-            <MudTh>Año</MudTh>
-            <MudTh>Editorial</MudTh>
-            <MudTh>Páginas</MudTh>
-            <MudTh>Autor</MudTh>
-        </HeaderContent>
+    @if (libros == null && string.IsNullOrEmpty(mensajeError))
+    {
+        <div class="flex flex-col items-center justify-center p-16 text-center">
+            <MudProgressCircular Color="Color.Primary" Indeterminate="true" Class="mb-4" />
+            <MudText Typo="Typo.h6">Cargando libros...</MudText>
+        </div>
+    }
+    else if (!string.IsNullOrEmpty(mensajeError))
+    {
+        <MudAlert Severity="Severity.Error" Class="mt-4">@mensajeError</MudAlert>
+    }
+    else if (libros != null && !libros.Any())
+    {
+        <MudAlert Severity="Severity.Info" Class="mt-4">No hay libros para mostrar en este momento.</MudAlert>
+    }
+    else if (libros != null)
+    {
+        <div class="shadow-lg rounded-xl overflow-hidden">
+            <MudTable Items="libros" Hover="true">
+                <HeaderContent>
+                    <MudTh>ID Libro</MudTh>
+                    <MudTh>Título</MudTh>
+                    <MudTh>Año</MudTh>
+                    <MudTh>Género</MudTh>
+                    <MudTh>Páginas</MudTh>
+                    <MudTh>Autor</MudTh>
+                </HeaderContent>
+                <RowTemplate>
+                    <MudTd DataLabel="ID Libro">@context.idLibro</MudTd>
+                    <MudTd DataLabel="Título">@context.titulo</MudTd>
+                    <MudTd DataLabel="Anio">@context.anio</MudTd>
+                    <MudTd DataLabel="Editorial">@context.genero</MudTd>
+                    <MudTd DataLabel="Paginas">@context.paginas</MudTd>
+                    <MudTd DataLabel="Autor">@context.nombreAutor</MudTd>
+                </RowTemplate>
+                <PagerContent>
+                    <MudTablePager />
+                </PagerContent>
+            </MudTable>
+        </div>
+    }
+</div>
 
-        <RowTemplate>
-            <MudTd DataLabel="ID Libro">@context.idLibro</MudTd>
-            <MudTd DataLabel="Título">@context.titulo</MudTd>
-            <MudTd DataLabel="Anio">@context.anio</MudTd>
-            <MudTd DataLabel="Editorial">@context.editorial</MudTd>
-            <MudTd DataLabel="Paginas">@context.paginas</MudTd>
-            <MudTd DataLabel="Autor">@context.nombreAutor</MudTd>
-        </RowTemplate>
-        <PagerContent>
-            <MudTablePager />
-        </PagerContent>
-    </MudTable>
-}
 
 @code {
-    private List<Libro>? libros;
+    private List<LibroDTO>? libros;
     private string? mensajeError;
 
     protected override async Task OnInitializedAsync()
     {
+        await CargarLibros();
+    }
+
+    private async Task CargarLibros()
+    {
+        libros = null; 
+        mensajeError = null;
+        StateHasChanged();
+
         try
         {
             var apiResponse = await LibroService.GetLibrosAsync();
@@ -60,12 +93,31 @@ else if (libros != null)
             else
             {
                 mensajeError = $"Error al cargar libros: {apiResponse?.Message} (Status: {apiResponse?.Status})";
-                libros = new List<Libro>();
+                libros = new List<LibroDTO>();
             }
         }
-        catch (Exception ex)
-        {            
+        catch(Exception ex)
+        {
             mensajeError = $"Error:{ex.Message}";
+        }
+        StateHasChanged();
+    }
+
+    private async Task OpenCreateDialog()
+    {
+        var parameters = new DialogParameters
+        {
+           { "anioDafault", 2010 }
+        };
+
+        var options = new DialogOptions { CloseOnEscapeKey = true, MaxWidth = MaxWidth.Small, FullWidth = true };
+        
+        var dialog = DialogService.Show<CrearLibroDialog>("Nuevo Libro", parameters, options);
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+        {
+            await CargarLibros();
         }
     }
 }
