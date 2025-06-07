@@ -20,7 +20,7 @@ namespace Libreria.Frontend.Services
             }
             catch (HttpRequestException ex)
             {
-                Console.WriteLine("Error de conexión: {ex.Message}");
+                Console.WriteLine($"Error de conexión: {ex.Message}");
                 return null;
             }
             catch (Exception ex)
