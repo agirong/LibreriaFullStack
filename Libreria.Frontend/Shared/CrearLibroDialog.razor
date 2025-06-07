@@ -1,0 +1,139 @@
+﻿@using Libreria.Frontend.DTOs.Autor
+@using Libreria.Frontend.Services
+@using Libreria.Frontend.DTOs.Libro
+@inject ISnackbar Snackbar
+@inject ILibroService LibroService
+@inject IAutorService AutorService
+
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            <MudIcon Icon="@Icons.Material.Filled.Add" Class="mr-2" />
+            Crear Nuevo Libro
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudForm @ref="_form" @bind-IsValid="_success" Model="_crearLibroDto">
+            <MudGrid>
+                <MudItem xs="12">
+                    <MudTextField @bind-Value="_crearLibroDto.titulo"
+                                  For="@(() => _crearLibroDto.titulo)"
+                                  Immediate="true"
+                                  Label="Título del libro" />
+                </MudItem>
+                <MudItem xs="6">
+                    <MudSelect T="int?" @bind-Value="_crearLibroDto.IdAutor"
+                               For="@(() => _crearLibroDto.IdAutor)"
+                               Label="Autor"
+                               Placeholder="Seleccione un autor">
+                        @foreach (var autor in _autores)
+                        {
+                            <MudSelectItem Value="@autor?.idAutor">@autor.nombre</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+                <MudItem xs="6">
+                    <MudTextField @bind-Value="_crearLibroDto.genero"
+                                  For="@(() => _crearLibroDto.genero)"
+                                  Label="Género" />
+                </MudItem>
+                <MudItem xs="6">
+                    <MudNumericField @bind-Value="_crearLibroDto.anio"
+                                     For="@(() => _crearLibroDto.anio)"
+                                     Label="Año de Publicación" />
+                </MudItem>
+
+                <MudItem xs="6">
+                    <MudNumericField @bind-Value="_crearLibroDto.paginas"
+                                     For="@(() => _crearLibroDto.paginas)"
+                                     Label="Paginas" />
+                </MudItem>
+            </MudGrid>
+        </MudForm>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancelar</MudButton>
+        <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="Submit" Disabled="@(!_success)">Guardar</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    MudDialogInstance MudDialog { get; set; } = null!;
+
+    [Parameter]
+    public int anioDafault { get; set; }
+
+    private MudForm? _form;
+    private bool _success;
+
+    //Modelo del formulario
+    private CrearLibroDTO _crearLibroDto = new();
+
+    private List<AutorDTO> _autores = new();
+    private string? mensajeError;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _crearLibroDto.anio = anioDafault;
+
+        await CargarAutores();
+
+        await Task.CompletedTask;
+    }
+
+    private async Task CargarAutores()
+    {
+        mensajeError = null;
+        try
+        {
+            var apiResponse = await AutorService.GetAutorsAsync();
+
+            if (apiResponse != null && apiResponse.Data != null && apiResponse.Status == 200)
+            {
+                _autores = apiResponse.Data;
+            }
+            else
+            {
+                mensajeError = $"Error al cargar libros: {apiResponse?.Message} (Status: {apiResponse?.Status})";
+                _autores = new List<AutorDTO>();
+            }
+        }
+        catch (Exception ex)
+        {
+            mensajeError = $"Error:{ex.Message}";
+        }
+    }
+
+    private async Task Submit()
+    {
+        await _form!.Validate();
+
+        if (_success)
+        {
+            try
+            {
+                var nuevoLibro = new CrearLibroDTO
+                {
+                    titulo = _crearLibroDto.titulo,
+                    anio = _crearLibroDto.anio,
+                    genero = _crearLibroDto.genero,
+                    paginas = _crearLibroDto.paginas,
+                    IdAutor = _crearLibroDto.IdAutor
+                };
+
+                await LibroService.PostLibroAsync(nuevoLibro);
+
+                Snackbar.Add("Libro creado con éxito.", Severity.Success);
+                MudDialog.Close(DialogResult.Ok(true));
+            }
+            catch (Exception ex)
+            {
+                Snackbar.Add($"Error al crear el libro: {ex.Message}", Severity.Error);
+                throw;
+            }
+        }
+    }
+
+    void Cancel() => MudDialog.Cancel();
+}
