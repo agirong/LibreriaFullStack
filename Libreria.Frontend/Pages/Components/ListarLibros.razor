@@ -45,18 +45,18 @@
                 <HeaderContent>
                     <MudTh>ID Libro</MudTh>
                     <MudTh>Título</MudTh>
-                    <MudTh>Año</MudTh>
-                    <MudTh>Género</MudTh>
-                    <MudTh>Páginas</MudTh>
                     <MudTh>Autor</MudTh>
+                    <MudTh>Género</MudTh>
+                    <MudTh>Año</MudTh>
+                    <MudTh>Páginas</MudTh>
                 </HeaderContent>
                 <RowTemplate>
                     <MudTd DataLabel="ID Libro">@context.idLibro</MudTd>
                     <MudTd DataLabel="Título">@context.titulo</MudTd>
-                    <MudTd DataLabel="Anio">@context.anio</MudTd>
-                    <MudTd DataLabel="Editorial">@context.genero</MudTd>
-                    <MudTd DataLabel="Paginas">@context.paginas</MudTd>
                     <MudTd DataLabel="Autor">@context.nombreAutor</MudTd>
+                    <MudTd DataLabel="Genero">@context.genero</MudTd>
+                    <MudTd DataLabel="Anio">@context.anio</MudTd>
+                    <MudTd DataLabel="Paginas">@context.paginas</MudTd>
                 </RowTemplate>
                 <PagerContent>
                     <MudTablePager />
@@ -99,6 +99,7 @@
         catch(Exception ex)
         {
             mensajeError = $"Error:{ex.Message}";
+            //Snackbar.Add(mensajeError, Severity.Error);
         }
         StateHasChanged();
     }

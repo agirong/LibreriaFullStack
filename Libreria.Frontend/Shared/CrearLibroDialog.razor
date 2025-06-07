@@ -76,7 +76,7 @@
     protected override async Task OnInitializedAsync()
     {
         _crearLibroDto.anio = anioDafault;
-        
+
         await CargarAutores();
 
         await Task.CompletedTask;
@@ -113,13 +113,24 @@
         {
             try
             {
-                //Aqui debo insertar los registros.
-                Snackbar.Add("Libro creado con éxito (simulación).", Severity.Success);
+                var nuevoLibro = new CrearLibroDTO
+                {
+                    titulo = _crearLibroDto.titulo,
+                    anio = _crearLibroDto.anio,
+                    genero = _crearLibroDto.genero,
+                    paginas = _crearLibroDto.paginas,
+                    IdAutor = _crearLibroDto.IdAutor
+                };
+
+                await LibroService.PostLibroAsync(nuevoLibro);
+
+                Snackbar.Add("Libro creado con éxito.", Severity.Success);
                 MudDialog.Close(DialogResult.Ok(true));
             }
             catch (Exception ex)
             {
                 Snackbar.Add($"Error al crear el libro: {ex.Message}", Severity.Error);
+                throw;
             }
         }
     }
