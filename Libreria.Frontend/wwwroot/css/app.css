@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 .mud-themed-loader-container {
     position: absolute;
     top: 50%;
