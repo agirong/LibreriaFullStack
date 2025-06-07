@@ -8,6 +8,6 @@
         public string? genero { get; set; }
         public string? editorial { get; set; }
         public int paginas { get; set; }
-        public int idAutor { get; set; }
+        public string nombreAutor { get; set; }
     }
 }

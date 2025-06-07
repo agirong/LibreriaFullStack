@@ -24,13 +24,13 @@ namespace Libreria.Backend.ServiceImpl
                 List<LibroDTO> libros = _repositoryLibro.Get()
                     .Select(l => new LibroDTO
                     {
-                        idLibro = l.LibroID,
-                        titulo = l.Titulo,
-                        anio = l.Anio,
-                        genero = l.Genero,
-                        editorial = l.Editorial,
-                        paginas = l.Paginas,
-                        idAutor = l.AutorID,
+                        idLibro = l.idLibro,
+                        titulo = l.titulo,
+                        anio = l.anio,
+                        genero = l.genero,
+                        editorial = l.editorial,
+                        paginas = l.paginas,
+                        nombreAutor = l.nombreAutor,
                         //NombreAutor = l.Autor.Nombre 
                     }).ToList();
 
@@ -50,7 +50,7 @@ namespace Libreria.Backend.ServiceImpl
             return generalResponse; 
         }
 
-        public GeneralResponse RegistrarLibro(LibroDTO libro)
+        public GeneralResponse RegistrarLibro(CrearLibroDTO libro)
         {
             try
             {
@@ -59,12 +59,12 @@ namespace Libreria.Backend.ServiceImpl
                 libro.anio <= 0 ||
                 string.IsNullOrWhiteSpace(libro.genero) ||
                 libro.paginas <= 0 ||
-                libro.idAutor <= 0)
+                libro.IdAutor <= 0)
                 {
                     return GeneralResponseFn.responseGeneral(Constantes.CODIGO_ERROR, "Faltan campos obligatorios", null);
                 }
                 // Verificar existencia del autor 
-                var autor = _repositoryLibro.GetById(libro.idAutor);
+                var autor = _repositoryLibro.GetById(libro.IdAutor);
                 if (autor == null)
                 {
                     return GeneralResponseFn.responseGeneral(Constantes.CODIGO_ERROR, "El autor ingresado no existe", null);
@@ -89,7 +89,7 @@ namespace Libreria.Backend.ServiceImpl
                     Genero = libro.genero,
                     Editorial = libro.editorial,
                     Paginas = libro.paginas,
-                    AutorID = libro.idAutor,
+                    AutorID = libro.IdAutor,
                 };
                 _repositoryLibro.Add(libroDB);
                 generalResponse = GeneralResponseFn.responseGeneral(Constantes.CODIGO_EXITO, Constantes.MENSAJE_OK, null);

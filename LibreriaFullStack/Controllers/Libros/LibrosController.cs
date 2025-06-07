@@ -43,7 +43,7 @@ namespace Libreria.Backend.Controllers.Libros
 
         // POST api/<ValuesController>
         [HttpPost]
-        public IActionResult Post([FromBody] LibroDTO libro)
+        public IActionResult Post([FromBody] CrearLibroDTO libro)
         {
             try
             {

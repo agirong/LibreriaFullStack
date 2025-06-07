@@ -7,6 +7,6 @@ namespace Libreria.Backend.Service
     {
         public GeneralResponse ListarLibros();
 
-        public GeneralResponse RegistrarLibro(LibroDTO libro);
+        public GeneralResponse RegistrarLibro(CrearLibroDTO libro);
     }
 }

@@ -3,6 +3,7 @@
     public class Constantes
     {
         public static int CODIGO_EXITO = 200;
+        public static int CODIGO_CREATED = 201;
         public static int CODIGO_NO_DATA = 400;
         public static int CODIGO_ERROR = 500;
 

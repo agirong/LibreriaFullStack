@@ -2,6 +2,7 @@
 using Libreria.Backend.Repository;
 using Libreria.Backend.Models;
 using Microsoft.EntityFrameworkCore;
+using Libreria.Backend.DTOs.Libro;
 
 namespace Libreria.Backend.RepositoryImpl
 {
@@ -15,11 +16,23 @@ namespace Libreria.Backend.RepositoryImpl
         }
 
         //Listar
-        public List<Libro> Get()
+        public List<LibroDTO> Get()
         {
             try
             {
-                return _context.Libros.ToList();
+                return _context.Libros
+                .Include(libro => libro.Autor)
+                .Select(libro => new LibroDTO
+                {
+                    idLibro = libro.LibroID,
+                    titulo = libro.Titulo,
+                    anio = libro.Anio,
+                    genero = libro.Genero,
+                    editorial = libro.Editorial,
+                    paginas = libro.Paginas,
+                    nombreAutor = libro.Autor.Nombre
+                })
+                .ToList();
             }
             catch (Exception ex)
             {
