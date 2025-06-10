@@ -10,11 +10,13 @@ namespace Libreria.Backend.ServiceImpl
     public class ServiceLibroImpl : IServiceLibro
     {
         private readonly IRepositoryLibro _repositoryLibro;
+        private readonly IRepositoryAutor _repositoryAutor;
 
         GeneralResponse generalResponse = new GeneralResponse();
-        public ServiceLibroImpl(IRepositoryLibro repositoryLibro) 
+        public ServiceLibroImpl(IRepositoryLibro repositoryLibro, IRepositoryAutor repositoryAutor) 
         {
             _repositoryLibro = repositoryLibro; 
+            _repositoryAutor = repositoryAutor;   
         }
 
         public GeneralResponse ListarLibros()
@@ -34,14 +36,7 @@ namespace Libreria.Backend.ServiceImpl
                         //NombreAutor = l.Autor.Nombre 
                     }).ToList();
 
-                if (libros.Count() > 0)
-                {
-                    generalResponse = GeneralResponseFn.responseGeneral(Constantes.CODIGO_EXITO, Constantes.MENSAJE_OK, libros);
-                }
-                else
-                {
-                    generalResponse = GeneralResponseFn.responseGeneral(Constantes.CODIGO_NO_DATA, Constantes.MENSAJE_NO_DATA, null);
-                }
+                generalResponse = GeneralResponseFn.responseGeneral(Constantes.CODIGO_EXITO, Constantes.MENSAJE_OK, libros);
             }
             catch (Exception ex)
             {
@@ -64,7 +59,7 @@ namespace Libreria.Backend.ServiceImpl
                     return GeneralResponseFn.responseGeneral(Constantes.CODIGO_ERROR, "Faltan campos obligatorios", null);
                 }
                 // Verificar existencia del autor 
-                var autor = _repositoryLibro.GetById(libro.IdAutor);
+                var autor = _repositoryAutor.GetById(libro.IdAutor);
                 if (autor == null)
                 {
                     return GeneralResponseFn.responseGeneral(Constantes.CODIGO_ERROR, "El autor ingresado no existe", null);
@@ -92,7 +87,7 @@ namespace Libreria.Backend.ServiceImpl
                     AutorID = libro.IdAutor,
                 };
                 _repositoryLibro.Add(libroDB);
-                generalResponse = GeneralResponseFn.responseGeneral(Constantes.CODIGO_EXITO, Constantes.MENSAJE_OK, null);
+                generalResponse = GeneralResponseFn.responseGeneral(Constantes.CODIGO_EXITO, Constantes.MENSAJE_OK, libro);
             }
             catch (Exception ex)
             {

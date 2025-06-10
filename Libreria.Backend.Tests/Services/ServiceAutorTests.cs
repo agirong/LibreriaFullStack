@@ -18,13 +18,13 @@ namespace Libreria.Backend.Tests.Services
     public class ServiceAutorTests
     {
         //Mock para simular el repositotry
-        private readonly Mock<IRepositoryAutor> _mockAutorRepository;
-        private readonly ServiceAutorImpl _sut;
+        private readonly Mock<IRepositoryAutor> _mockRepositoryAutor;
+        private readonly ServiceAutorImpl _servicioTest;
 
         public ServiceAutorTests()
         {
-            _mockAutorRepository = new Mock<IRepositoryAutor>();
-            _sut = new ServiceAutorImpl(_mockAutorRepository.Object); 
+            _mockRepositoryAutor = new Mock<IRepositoryAutor>();
+            _servicioTest = new ServiceAutorImpl(_mockRepositoryAutor.Object); 
         }
 
         [Fact]
@@ -37,10 +37,10 @@ namespace Libreria.Backend.Tests.Services
                 new Autor { AutorId = 2, Nombre = "George Orwell" }
             };
 
-            _mockAutorRepository.Setup(repo => repo.Get()).Returns(autoresDesdeDb);
+            _mockRepositoryAutor.Setup(repo => repo.Get()).Returns(autoresDesdeDb);
 
             // ACT 
-            var resultado = _sut.ListarAutores();
+            var resultado = _servicioTest.ListarAutores();
 
             // ASSERT
             resultado.Should().NotBeNull();
@@ -54,10 +54,10 @@ namespace Libreria.Backend.Tests.Services
         public void ListarAutores_Deberia_DevolverRespuestaExitosaConListaVacia_CuandoNoExistenAutores()
         {
             // ARRANGE
-            _mockAutorRepository.Setup(repo => repo.Get()).Returns(new List<Autor>());
+            _mockRepositoryAutor.Setup(repo => repo.Get()).Returns(new List<Autor>());
 
             // ACT
-            var resultado = _sut.ListarAutores();
+            var resultado = _servicioTest.ListarAutores();
 
             // ASSERT
             resultado.Should().NotBeNull();
@@ -71,7 +71,7 @@ namespace Libreria.Backend.Tests.Services
         public void RegistrarAutor_Deberia_LlamarAlRepositorioYDevolverExito_CuandoDatosSonValidos()
         {
             // ARRANGE
-            var crearAutorDto = new AutorDTO
+            var crearAutorDto = new CrearAutorDTO
             {
                 nombre = "Isabel Allende",
                 ciudad = "Lima",
@@ -88,21 +88,21 @@ namespace Libreria.Backend.Tests.Services
                 FhNacimiento = crearAutorDto.fhNacimiento
             };
 
-            _mockAutorRepository.Setup(repo => repo.Add(It.IsAny<Autor>()));
+            _mockRepositoryAutor.Setup(repo => repo.Add(It.IsAny<Autor>()));
 
             // ACT 
-            var resultadoGeneral = _sut.RegistrarAutor(crearAutorDto);
+            var resultadoGeneral = _servicioTest.RegistrarAutor(crearAutorDto);
 
             // ASSERT
             resultadoGeneral.Should().NotBeNull();
             resultadoGeneral.Status.Should().Be(Constantes.CODIGO_EXITO);
 
             // Verificar los datos.
-            var autorEnRespuesta = (AutorDTO)resultadoGeneral.Data;
+            var autorEnRespuesta = (CrearAutorDTO)resultadoGeneral.Data;
             autorEnRespuesta.Should().NotBeNull();
             autorEnRespuesta.nombre.Should().Be("Isabel Allende");
 
-            _mockAutorRepository.Verify(repo => repo.Add(It.IsAny<Autor>()), Times.Once);
+            _mockRepositoryAutor.Verify(repo => repo.Add(It.IsAny<Autor>()), Times.Once);
         }
     }
 }

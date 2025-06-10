@@ -38,14 +38,14 @@ namespace Libreria.Backend.ServiceImpl
             return generalResponse;
         }
 
-        public GeneralResponse RegistrarAutor(AutorDTO autor)
+        public GeneralResponse RegistrarAutor(CrearAutorDTO autor)
         {
             try
             {                
                 Autor autorDB = new Autor
                 {
                     Nombre = autor.nombre,
-                    FhNacimiento = autor.fhNacimiento,
+                    FhNacimiento = autor.fhNacimiento.ToUniversalTime(),
                     Ciudad = autor.ciudad,
                     Email = autor.email,
                 };

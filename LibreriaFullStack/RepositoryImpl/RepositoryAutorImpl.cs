@@ -26,6 +26,19 @@ namespace Libreria.Backend.RepositoryImpl
             }
         }
 
+        //Listar
+        public Autor GetById(int idAutor)
+        {
+            try
+            {
+                return _context.Autors.Where(x => x.AutorId == idAutor).FirstOrDefault();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
         //Guardar
         public void Add(Autor autor)
         {
