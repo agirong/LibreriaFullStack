@@ -1,6 +1,7 @@
 ﻿using Libreria.Frontend.DTOs.Autor;
 using Libreria.Frontend.Models;
 using System.Net.Http.Json;
+using System.Text.Json;
 
 namespace Libreria.Frontend.Services
 {
@@ -28,6 +29,35 @@ namespace Libreria.Frontend.Services
             {
                 Console.WriteLine($"Error en LibroService.GetLibrosAsync: {ex.Message}");
                 return null;
+            }
+        }
+
+        public async Task PostAutorsAsync(CrearAutorDTO crearAutor)
+        {
+            try
+            {
+                string json = JsonSerializer.Serialize(crearAutor);
+                var content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
+                HttpResponseMessage response = await _httpClient.PostAsync("api/Autor", content);
+                if (response.IsSuccessStatusCode)
+                {
+                    string responseString = await response.Content.ReadAsStringAsync();
+                    Console.WriteLine(responseString);
+                }
+                else
+                {
+                    Console.WriteLine("Error: " + response.StatusCode);
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                Console.WriteLine($"Error de conexión HTTP : {ex.Message}");
+                throw;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error en LibroService.GetLibrosAsync: {ex.Message}");
+                throw;
             }
         }
     }
