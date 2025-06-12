@@ -6,5 +6,6 @@ namespace Libreria.Frontend.Services
     public interface IAutorService
     {
         Task<ApiResponseDTO<List<AutorDTO>>?> GetAutorsAsync();
+        Task PostAutorsAsync(CrearAutorDTO crearAutor);
     }
 }

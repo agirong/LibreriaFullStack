@@ -6,7 +6,6 @@ namespace Libreria.Backend.Service
     public interface IServiceLibro
     {
         public GeneralResponse ListarLibros();
-
         public GeneralResponse RegistrarLibro(CrearLibroDTO libro);
     }
 }

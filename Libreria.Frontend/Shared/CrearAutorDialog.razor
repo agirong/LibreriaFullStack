@@ -1,0 +1,119 @@
+﻿@using Libreria.Frontend.Services
+@using Libreria.Frontend.DTOs.Autor
+@inject ISnackbar Snackbar
+@inject IAutorService AutorService
+    
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            <MudIcon Icon="@Icons.Material.Filled.Add" Class="mr-2" />
+            Crear Nuevo Autor
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudForm @ref="_form" @bind-IsValid="_success" Model="_crearAutorDto">
+            <MudGrid>
+                <MudItem xs="6">
+                    <MudTextField @bind-Value="_crearAutorDto.nombre"
+                                  For="@(() => _crearAutorDto.nombre)"
+                                  Immediate="true"
+                                  Label="Nombre del Autor" />
+                </MudItem>
+                <MudItem xs="6">
+                    <MudDatePicker @bind-Date="_crearAutorDto.fhNacimiento" 
+                                  For="@(() => _crearAutorDto.fhNacimiento)" 
+                                  Label="Fecha de Nacimiento"/>
+                </MudItem>
+                <MudItem xs="6">
+                    <MudTextField @bind-Value="_crearAutorDto.ciudad"
+                                  For="@(() => _crearAutorDto.ciudad)"
+                                  Label="Ciudad" />
+                </MudItem>
+                <MudItem xs="6">
+                    <MudTextField @bind-Value="_crearAutorDto.email"
+                                     For="@(() => _crearAutorDto.email)"
+                                     Label="Email" />
+                </MudItem>
+            </MudGrid>
+        </MudForm>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancelar</MudButton>
+        <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="Submit" Disabled="@(!_success)">Guardar</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    MudDialogInstance MudDialog { get; set; } = null!;
+
+    private MudForm? _form;
+    private bool _success;
+
+    // //Modelo del formulario
+    private CrearAutorDTO _crearAutorDto = new();
+
+    private List<AutorDTO> _autores = new();
+    private string? mensajeError;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CargarAutores();
+
+        await Task.CompletedTask;
+    }
+
+    private async Task CargarAutores()
+    {
+        mensajeError = null;
+        try
+        {
+            var apiResponse = await AutorService.GetAutorsAsync();
+
+            if (apiResponse != null && apiResponse.Data != null && apiResponse.Status == 200)
+            {
+                _autores = apiResponse.Data;
+            }
+            else
+            {
+                mensajeError = $"Error al cargar libros: {apiResponse?.Message} (Status: {apiResponse?.Status})";
+                _autores = new List<AutorDTO>();
+            }
+        }
+        catch (Exception ex)
+        {
+            mensajeError = $"Error:{ex.Message}";
+        }
+    }
+
+    private async Task Submit()
+    {
+        await _form!.Validate();
+
+        if (_success)
+        {
+            try
+            {
+                var nuevoAutor = new CrearAutorDTO
+                {
+                    nombre = _crearAutorDto.nombre,
+                    fhNacimiento = _crearAutorDto.fhNacimiento,
+                    ciudad = _crearAutorDto.ciudad,
+                    email = _crearAutorDto.email,
+                };
+
+                await AutorService.PostAutorsAsync(nuevoAutor);
+
+                Snackbar.Add("Autor creado con éxito.", Severity.Success);
+                MudDialog.Close(DialogResult.Ok(true));
+            }
+            catch (Exception ex)
+            {
+                Snackbar.Add($"Error al crear el libro: {ex.Message}", Severity.Error);
+                throw;
+            }
+        }
+    }
+
+    void Cancel() => MudDialog.Cancel();
+}

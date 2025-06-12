@@ -7,8 +7,6 @@ namespace Libreria.Backend.Repository
     {
         public List<LibroDTO> Get();
 
-        public Autor GetById(int idAutor);
-
         public void Add(Libro libro);
     }
 }

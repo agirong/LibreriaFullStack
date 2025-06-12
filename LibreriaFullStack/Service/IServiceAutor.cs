@@ -6,6 +6,6 @@ namespace Libreria.Backend.Service
     public interface IServiceAutor
     {
         public GeneralResponse ListarAutores();
-        public GeneralResponse RegistrarAutor(AutorDTO autor);
+        public GeneralResponse RegistrarAutor(CrearAutorDTO autor);
     }
 }

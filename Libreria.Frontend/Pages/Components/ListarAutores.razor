@@ -1,16 +1,124 @@
 ﻿@page "/autores"
+@using Libreria.Frontend.DTOs.Autor
+@using Libreria.Frontend.Services
+@inject IAutorService AutorService
+@inject IDialogService DialogService
 
-<h3>ListarAutores</h3>
 
-<p role="status">Current count: @currentCount</p>
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <div class="flex justify-between items-center mb-8">
+        <div>
+            <h1 class="text-3xl font-bold tracking-tight text-text-primary">
+                Catálogo de Autores
+            </h1>
+            <p class="mt-1 text-sm text-text-secondary">
+                Mantenimiento de Autores Disponibles.
+            </p>
+        </div>
+        <div>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" OnClick="OpenCreateDialog">
+                Crear Autor
+            </MudButton>
+        </div>
+    </div>
 
-<MudButton Color="Color.Primary" Variant="Variant.Filled" @onclick="IncrementCount">Click me</MudButton>
+    @if (autores == null && string.IsNullOrEmpty(mensajeError))
+    {
+        <div class="flex flex-col items-center justify-center p-16 text-center">
+            <MudProgressCircular Color="Color.Primary" Indeterminate="true" Class="mb-4" />
+            <MudText Typo="Typo.h6">Cargando Autores...</MudText>
+        </div>
+    }
+    else if (!string.IsNullOrEmpty(mensajeError))
+    {
+        <MudAlert Severity="Severity.Error" Class="mt-4">@mensajeError</MudAlert>
+    }
+    else if (autores != null && !autores.Any())
+    {
+        <MudAlert Severity="Severity.Info" Class="mt-4">No hay autores.</MudAlert>
+    }
+    else if (autores != null)
+    {
+        <div class="shadow-lg rounded-xl overflow-hidden">
+            <MudTable Items="autores" Hover="true">
+                <HeaderContent>
+                    <MudTh>ID Autor</MudTh>
+                    <MudTh>Nombre</MudTh>
+                    <MudTh>Fecha Nacimiento</MudTh>
+                    <MudTh>Ciudad</MudTh>
+                    <MudTh>Email</MudTh>
+                    <MudTh>Editar</MudTh>
+                </HeaderContent>
+                <RowTemplate>
+                    <MudTd DataLabel="ID Autor">@context.idAutor</MudTd>
+                    <MudTd DataLabel="Nombre">@context.nombre</MudTd>
+                    <MudTd DataLabel="Fecha Nacimiento">@context.fhNacimiento.ToString("dd/MM/yyyy")</MudTd>
+                    <MudTd DataLabel="Ciudad">@context.ciudad</MudTd>
+                    <MudTd DataLabel="Email">@context.email</MudTd>
+                    <MudTd DataLabel="Editar">
+                        <MudIconButton Variant="Variant.Filled" Icon="@Icons.Material.Filled.Edit" Color="Color.Primary" Size="Size.Small" />
+                    </MudTd>
+                </RowTemplate>
+                <PagerContent>
+                    <MudTablePager />
+                </PagerContent>
+            </MudTable>
+        </div>
+    }
+</div>
 
 @code {
-    private int currentCount = 0;
+    private List<AutorDTO>? autores;
+    private string? mensajeError;
 
-    private void IncrementCount()
+    protected override async Task OnInitializedAsync()
     {
-        currentCount++;
+        await CargarAutores();
+    }
+
+    private async Task CargarAutores()
+    {
+        autores = null;
+        mensajeError = null;
+        StateHasChanged();
+
+        try
+        {
+            var apiResponse = await AutorService.GetAutorsAsync();
+
+            if (apiResponse != null && apiResponse.Data != null && apiResponse.Status == 200)
+            {
+                autores = apiResponse.Data;
+            }
+            else
+            {
+                mensajeError = $"Error al cargar autores: {apiResponse?.Message} (Status: {apiResponse?.Status})";
+                autores = new List<AutorDTO>();
+            }
+        }
+        catch (Exception ex)
+        {
+            mensajeError = $"Error:{ex.Message}";
+            //Snackbar.Add(mensajeError, Severity.Error);
+        }
+        StateHasChanged();
+    }
+
+    private async Task OpenCreateDialog()
+    {
+        var parameters = new DialogParameters
+        {
+           
+        };
+
+        var options = new DialogOptions { CloseOnEscapeKey = true, MaxWidth = MaxWidth.Small, FullWidth = true };
+
+        var dialog = DialogService.Show<CrearAutorDialog>("Nuevo Libro", parameters, options);
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+        {
+            await CargarAutores();
+        }
     }
 }

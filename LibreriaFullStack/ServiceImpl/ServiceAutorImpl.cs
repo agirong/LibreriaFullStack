@@ -19,7 +19,7 @@ namespace Libreria.Backend.ServiceImpl
         {
             try
             {
-                List<AutorDTO> autor = _repositoryAutor.Get()
+                List<AutorDTO> autorDto = _repositoryAutor.Get()
                     .Select(a => new AutorDTO
                     {
                         idAutor = a.AutorId,
@@ -29,14 +29,7 @@ namespace Libreria.Backend.ServiceImpl
                         email = a.Email,    
                     }).ToList();
 
-                if (autor.Count() > 0)
-                {
-                    generalResponse = GeneralResponseFn.responseGeneral(Constantes.CODIGO_EXITO, Constantes.MENSAJE_OK, autor);
-                }
-                else
-                {
-                    generalResponse = GeneralResponseFn.responseGeneral(Constantes.CODIGO_NO_DATA, Constantes.MENSAJE_NO_DATA, null);
-                }
+                return GeneralResponseFn.responseGeneral(Constantes.CODIGO_EXITO, Constantes.MENSAJE_OK, autorDto);
             }
             catch (Exception ex)
             {
@@ -45,19 +38,19 @@ namespace Libreria.Backend.ServiceImpl
             return generalResponse;
         }
 
-        public GeneralResponse RegistrarAutor(AutorDTO autor)
+        public GeneralResponse RegistrarAutor(CrearAutorDTO autor)
         {
             try
             {                
                 Autor autorDB = new Autor
                 {
                     Nombre = autor.nombre,
-                    FhNacimiento = autor.fhNacimiento,
+                    FhNacimiento = autor.fhNacimiento.ToUniversalTime(),
                     Ciudad = autor.ciudad,
                     Email = autor.email,
                 };
                 _repositoryAutor.Add(autorDB);
-                generalResponse = GeneralResponseFn.responseGeneral(Constantes.CODIGO_EXITO, Constantes.MENSAJE_OK, null);
+                generalResponse = GeneralResponseFn.responseGeneral(Constantes.CODIGO_EXITO, Constantes.MENSAJE_OK, autor);
             }
             catch (Exception ex)
             {

@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Libreria.Backend", "Libreri
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Libreria.Frontend", "Libreria.Frontend\Libreria.Frontend.csproj", "{EC3062BD-F1BC-41FC-8A5A-9FDF28BB0F1F}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Libreria.Backend.Tests", "Libreria.Backend.Tests\Libreria.Backend.Tests.csproj", "{72B31179-1471-4B9B-B064-3672912ECB79}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{EC3062BD-F1BC-41FC-8A5A-9FDF28BB0F1F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EC3062BD-F1BC-41FC-8A5A-9FDF28BB0F1F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EC3062BD-F1BC-41FC-8A5A-9FDF28BB0F1F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{72B31179-1471-4B9B-B064-3672912ECB79}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{72B31179-1471-4B9B-B064-3672912ECB79}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{72B31179-1471-4B9B-B064-3672912ECB79}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{72B31179-1471-4B9B-B064-3672912ECB79}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

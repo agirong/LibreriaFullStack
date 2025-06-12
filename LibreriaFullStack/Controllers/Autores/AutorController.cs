@@ -49,7 +49,7 @@ namespace Libreria.Backend.Controllers.Autores
 
         // POST api/<AutorController>
         [HttpPost]
-        public IActionResult Post([FromBody] AutorDTO autor)
+        public IActionResult Post([FromBody] CrearAutorDTO autor)
         {
             try
             {
