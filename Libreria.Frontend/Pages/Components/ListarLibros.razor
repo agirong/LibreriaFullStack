@@ -23,13 +23,16 @@
         </div>
     </div>
     <div class="mb-4">
-        <MudTextField T="string"                      
+        <MudTextField T="string"
+                      @bind-Value="_terminoBusqueda"
                       Placeholder="Buscar por palabras clave título, autor o año"
                       Variant="Variant.Outlined"
                       Adornment="Adornment.End"
                       AdornmentIcon="@Icons.Material.Filled.Search"
                       OnAdornmentClick="CargarLibros"
-                      Clearable="true" />
+                      OnKeyDown="HandleSearchKeyDown"
+                      Clearable="true" 
+                      Immediate="true"/>
     </div>
     @if (libros == null && string.IsNullOrEmpty(mensajeError))
     {
@@ -82,6 +85,7 @@
 @code {
     private List<LibroDTO>? libros;
     private string? mensajeError;
+    private string _terminoBusqueda = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
@@ -96,7 +100,7 @@
 
         try
         {
-            var apiResponse = await LibroService.GetLibrosAsync();
+            var apiResponse = await LibroService.GetLibrosAsync(_terminoBusqueda);
 
             if (apiResponse != null && apiResponse.Data != null && apiResponse.Status == 200) 
             {
@@ -114,6 +118,14 @@
             //Snackbar.Add(mensajeError, Severity.Error);
         }
         StateHasChanged();
+    }
+
+    private async Task HandleSearchKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            await CargarLibros();
+        }
     }
 
     private void EditBook(int idLibro)
