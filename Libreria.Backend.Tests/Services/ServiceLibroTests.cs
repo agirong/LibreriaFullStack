@@ -29,12 +29,12 @@ namespace Libreria.Backend.Tests.Services
         public void ListarLibros_CuandoHayDatos_DevuelveListaDeLibros()
         {
             // ARRANGE
-            var librosDtoDesdeRepo = new List<LibroDTO>
+            var librosDtoDesdeRepo = new List<LibroDTO> 
             {
-                 new LibroDTO { idLibro = 1, titulo = "Cien años de soledad", nombreAutor = "G. García Márquez" },
-                 new LibroDTO { idLibro = 2, titulo = "1984", nombreAutor = "George Orwell" }
+                new LibroDTO { idLibro = 1, titulo = "Cien años de soledad", nombreAutor = "G. García Márquez" },
+                new LibroDTO { idLibro = 2, titulo = "1984", nombreAutor = "George Orwell" }
             };
-            _mockLibroRepository.Setup(repo => repo.Get()).Returns(librosDtoDesdeRepo);
+            _mockLibroRepository.Setup(repo => repo.Get(It.IsAny<string?>())).Returns(librosDtoDesdeRepo);
 
             // ACT 
             var resultadoGeneral = _servicioTest.ListarLibros();
@@ -49,10 +49,34 @@ namespace Libreria.Backend.Tests.Services
         }
 
         [Fact]
+        public void ListarLibros_ConTerminoDeBusqueda_Deberia_LlamarAlRepositorioConElTerminoCorrecto()
+        {
+            // ARRANGE
+            string terminoBusqueda = "soledad";
+            var librosFiltrados = new List<LibroDTO>
+            {
+                new LibroDTO { idLibro = 1, titulo = "Cien años de soledad", nombreAutor = "G. García Márquez" }
+            };
+            _mockLibroRepository.Setup(repo => repo.Get(terminoBusqueda)).Returns(librosFiltrados);
+
+            // ACT
+            var resultadoGeneral = _servicioTest.ListarLibros(terminoBusqueda);
+
+            // ASSERT 
+            resultadoGeneral.Should().NotBeNull();
+            resultadoGeneral.Status.Should().Be(200);
+            var listaDeLibros = (List<LibroDTO>)resultadoGeneral.Data;
+            listaDeLibros.Should().HaveCount(1);
+            listaDeLibros[0].titulo.Should().Contain("soledad");
+            //se llamo el servicio
+            _mockLibroRepository.Verify(repo => repo.Get(terminoBusqueda), Times.Once);
+        }
+
+        [Fact]
         public void ListarLibros_CuandoNoHayDatos_DevuelveListaVacia()
         {
             // ARRANGE
-            _mockLibroRepository.Setup(repo => repo.Get()).Returns(new List<LibroDTO>());
+            _mockLibroRepository.Setup(repo => repo.Get(It.IsAny<string?>())).Returns(new List<LibroDTO>());
 
             // ACT
             var resultadoGeneral = _servicioTest.ListarLibros();
@@ -82,7 +106,7 @@ namespace Libreria.Backend.Tests.Services
             _mockLibroRepository.Setup(repo => repo.Add(It.IsAny<Libro>()));
 
             _mockLibroRepository
-            .Setup(repo => repo.Get())
+            .Setup(repo => repo.Get(It.IsAny<string?>()))
             .Returns(new List<LibroDTO>()); 
 
             _mockLibroRepository

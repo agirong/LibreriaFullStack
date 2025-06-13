@@ -14,11 +14,16 @@ namespace Libreria.Frontend.Services
             _httpClient = httpClient;
         }
 
-        public async Task<ApiResponseDTO<List<LibroDTO>>?> GetLibrosAsync()
+        public async Task<ApiResponseDTO<List<LibroDTO>>?> GetLibrosAsync(string? busqueda = null)
         {
             try
             {
-                return await _httpClient.GetFromJsonAsync<ApiResponseDTO<List<LibroDTO>>>("api/Libros");
+                string url = "api/Libros";
+                if (!string.IsNullOrWhiteSpace(busqueda)) 
+                {
+                    url += $"?busqueda={Uri.EscapeDataString(busqueda)}";
+                }
+                return await _httpClient.GetFromJsonAsync<ApiResponseDTO<List<LibroDTO>>>(url);
             }
             catch (HttpRequestException ex)
             {

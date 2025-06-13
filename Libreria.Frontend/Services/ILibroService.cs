@@ -6,7 +6,7 @@ namespace Libreria.Frontend.Services
 {
     public interface ILibroService
     {
-        Task<ApiResponseDTO<List<LibroDTO>>?> GetLibrosAsync();
+        Task<ApiResponseDTO<List<LibroDTO>>?> GetLibrosAsync(string? busqueda = null);
         Task PostLibroAsync(CrearLibroDTO crearLibro);
     }
 }

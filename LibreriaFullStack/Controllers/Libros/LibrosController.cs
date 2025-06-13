@@ -21,11 +21,11 @@ namespace Libreria.Backend.Controllers.Libros
 
         // GET: api/<ValuesController>
         [HttpGet]
-        public IActionResult Get()
+        public IActionResult Get([FromQuery] string? busqueda)
         {
             try
             {
-                generalResponse = _serviceLibro.ListarLibros();
+                generalResponse = _serviceLibro.ListarLibros(busqueda);
                 if (generalResponse.Status.Equals(Constantes.CODIGO_EXITO))
                 {
                     return Ok(generalResponse);
