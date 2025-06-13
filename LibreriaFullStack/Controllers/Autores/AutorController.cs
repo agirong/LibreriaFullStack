@@ -40,13 +40,6 @@ namespace Libreria.Backend.Controllers.Autores
             }
         }
 
-        // GET api/<AutorController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
-        {
-            return "value";
-        }
-
         // POST api/<AutorController>
         [HttpPost]
         public IActionResult Post([FromBody] CrearAutorDTO autor)

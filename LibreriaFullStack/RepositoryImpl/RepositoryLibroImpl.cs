@@ -16,12 +16,27 @@ namespace Libreria.Backend.RepositoryImpl
         }
 
         //Listar
-        public List<LibroDTO> Get()
+        public List<LibroDTO> Get(string? busqueda = null)
         {
             try
             {
-                return _context.Libros
-                .Include(libro => libro.Autor)
+                var query = _context.Libros
+                            .Include(libro => libro.Autor)
+                            .AsQueryable();
+
+                // Cuando se recibe una busqueda
+                if (!string.IsNullOrWhiteSpace(busqueda))
+                {
+                    string busquedaEnMinusculas = busqueda.ToLower();
+
+                    query = query.Where(libro =>
+                        libro.Titulo.ToLower().Contains(busquedaEnMinusculas) ||
+                        libro.Autor.Nombre.ToLower().Contains(busquedaEnMinusculas) ||
+                        libro.Anio.ToString().Contains(busqueda)
+                    );
+                }
+
+                return query
                 .Select(libro => new LibroDTO
                 {
                     idLibro = libro.LibroID,

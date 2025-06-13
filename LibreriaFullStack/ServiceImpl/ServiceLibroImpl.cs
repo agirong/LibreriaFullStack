@@ -19,22 +19,11 @@ namespace Libreria.Backend.ServiceImpl
             _repositoryAutor = repositoryAutor;   
         }
 
-        public GeneralResponse ListarLibros()
+        public GeneralResponse ListarLibros(string? busqueda = null)
         {
             try
             {
-                List<LibroDTO> libros = _repositoryLibro.Get()
-                    .Select(l => new LibroDTO
-                    {
-                        idLibro = l.idLibro,
-                        titulo = l.titulo,
-                        anio = l.anio,
-                        genero = l.genero,
-                        editorial = l.editorial,
-                        paginas = l.paginas,
-                        nombreAutor = l.nombreAutor,
-                        //NombreAutor = l.Autor.Nombre 
-                    }).ToList();
+                List<LibroDTO> libros = _repositoryLibro.Get(busqueda);
 
                 generalResponse = GeneralResponseFn.responseGeneral(Constantes.CODIGO_EXITO, Constantes.MENSAJE_OK, libros);
             }
